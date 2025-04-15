@@ -42,30 +42,42 @@ def update_char():
         # Step 2: Get login page
         session.get(login_url, headers=headers, timeout=timeout_time)
 
-        # Step 3: Post login
+        # Step 3: Login
         login_resp = session.post(login_url, data=login_payload, headers=headers, timeout=timeout_time)
         soup_login = BeautifulSoup(login_resp.text, "html.parser")
         if soup_login.find("form", {"id": "form2"}):
             return jsonify({"error": "Login failed"}), 401
 
-        # Step 4: Search character to prep form
+        # Step 4: Search character to load edit form
         search_payload = {
             "charname": charname,
             "searchname": "Submit"
         }
         session.post(charedit_url, data=search_payload, headers=headers, timeout=timeout_time)
 
-        # Step 5: Post updated data
+        # Step 5: Post new data
         update_payload = {"charname": charname, "submit": "Edit"}
         update_payload.update(new_data)
 
         update_resp = session.post(charedit_url, data=update_payload, headers=headers, timeout=timeout_time)
 
-        # Step 6: Parse result
-        if "success" in update_resp.text.lower():
+        # DEBUG output - useful for development
+        print("==== RESPONSE HTML ====")
+        print(update_resp.text)
+        print("========================")
+
+        # Step 6: Check if update was successful
+        soup_result = BeautifulSoup(update_resp.text, "html.parser")
+        success_text = soup_result.get_text().lower()
+
+        if "updated" in success_text or "success" in success_text or f"{charname.lower()} updated" in success_text:
             return jsonify({"status": "success", "charname": charname})
         else:
-            return jsonify({"status": "failed", "details": "No success message found"})
+            return jsonify({
+                "status": "failed",
+                "details": "Could not confirm update",
+                "html_preview": success_text[:300]  # Return snippet for debugging
+            })
 
     except requests.exceptions.RequestException as e:
         return jsonify({"error": str(e)}), 500
