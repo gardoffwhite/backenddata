@@ -1,5 +1,5 @@
-Flask==2.0.1
-Flask-CORS==5.0.1
-requests==2.25.1
-beautifulsoup4==4.10.0
-gunicorn==20.1.0
+Flask==2.1.0        # ใช้เวอร์ชัน Flask ที่เหมาะสม
+Werkzeug==2.0.3     # ตั้งเวอร์ชันให้เหมาะสมกับ Flask
+Flask-CORS==3.0.9   # เวอร์ชัน Flask-CORS ที่เหมาะสม
+requests
+beautifulsoup4
