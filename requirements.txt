@@ -3,3 +3,4 @@ Flask-CORS==3.0.9
 requests
 beautifulsoup4
 gunicorn
+Werkzeug==2.3.7
